@@ -12,9 +12,11 @@
  * GNU General Public License for more details.
  *
  */
+#ifndef CONFIG_BCM4329
+#include <linux/wlan_plat.h>
+#endif
 #ifndef _LINUX_WIFI_TIWLAN_H_
 #define _LINUX_WIFI_TIWLAN_H_
-
 #define WMPA_NUMBER_OF_SECTIONS	3
 #define WMPA_NUMBER_OF_BUFFERS	160
 #define WMPA_SECTION_HEADER	24
@@ -22,6 +24,7 @@
 #define WMPA_SECTION_SIZE_1	(WMPA_NUMBER_OF_BUFFERS * 256)
 #define WMPA_SECTION_SIZE_2	(WMPA_NUMBER_OF_BUFFERS * 2048)
 
+#ifdef CONFIG_BCM4329_OLD
 struct wifi_platform_data {
 	char *name;
 	int (*set_power)(int val);
@@ -31,5 +34,6 @@ struct wifi_platform_data {
 	int dot11n_enable;
 	int cscan_enable;
 };
+#endif
 
 #endif

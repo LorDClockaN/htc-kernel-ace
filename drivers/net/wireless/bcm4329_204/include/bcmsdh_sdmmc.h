@@ -47,7 +47,7 @@ extern void sdioh_sdmmc_osfree(sdioh_info_t *sd);
 
 #define SDIOH_ASSERT(exp) \
 	do { if (!(exp)) \
-		myprintf("!!!ASSERT fail: file %s lines %d", __FILE__, __LINE__); \
+		printf("!!!ASSERT fail: file %s lines %d", __FILE__, __LINE__); \
 	} while (0)
 
 #define BLOCK_SIZE_4318 64

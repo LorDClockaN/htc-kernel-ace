@@ -21,7 +21,11 @@
 #include <asm/gpio.h>
 #include <asm/io.h>
 #include <linux/skbuff.h>
+#ifndef CONFIG_BCM4329
 #include <linux/wifi_tiwlan.h>
+#else
+#include <linux/wlan_plat.h>
+#endif
 
 #include "board-spade.h"
 
@@ -89,7 +93,11 @@ static struct resource spade_wifi_resources[] = {
 		.name		= "bcm4329_wlan_irq",
 		.start		= MSM_GPIO_TO_INT(SPADE_GPIO_WIFI_IRQ),
 		.end		= MSM_GPIO_TO_INT(SPADE_GPIO_WIFI_IRQ),
+#ifdef CONFIG_BCM4329_OLD
 		.flags          = IORESOURCE_IRQ | IORESOURCE_IRQ_LOWEDGE,
+#else
+		.flags          = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL | IORESOURCE_IRQ_SHAREABLE,
+#endif
 	},
 };
 
@@ -98,7 +106,9 @@ static struct wifi_platform_data spade_wifi_control = {
 	.set_reset      = spade_wifi_reset,
 	.set_carddetect = spade_wifi_set_carddetect,
 	.mem_prealloc   = spade_wifi_mem_prealloc,
+#ifdef CONFIG_BCM4329_OLD
 	.dot11n_enable  = 1,
+#endif
 };
 
 static struct platform_device spade_wifi_device = {
