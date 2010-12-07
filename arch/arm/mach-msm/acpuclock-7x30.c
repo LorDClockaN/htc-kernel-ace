@@ -60,6 +60,7 @@ struct clock_state {
 	struct mutex			lock;
 	uint32_t			acpu_switch_time_us;
 	uint32_t			vdd_switch_time_us;
+	unsigned long                   power_collapse_khz;
 	unsigned long			wait_for_irq_khz;
 	int				wfi_ramp_down;
 	int				pwrc_ramp_down;
@@ -128,23 +129,26 @@ static unsigned long max_axi_rate;
 unsigned long acpuclk_power_collapse(int from_idle)
 {
 	int ret = acpuclk_get_rate();
-	if (drv_state.pwrc_ramp_down)
-		acpuclk_set_rate(POWER_COLLAPSE_HZ, SETRATE_PC);
-	return ret * 1000;
+	ret *= 1000;
+	if (ret > drv_state.power_collapse_khz)
+		acpuclk_set_rate(drv_state.power_collapse_khz,
+	(from_idle ? SETRATE_PC_IDLE : SETRATE_PC));
+	return ret;
 }
 
 unsigned long acpuclk_get_wfi_rate(void)
 {
-	return drv_state.wait_for_irq_khz * 1000;
+	return drv_state.wait_for_irq_khz;
 }
 
 #define WAIT_FOR_IRQ_HZ (MAX_AXI_KHZ * 1000)
 unsigned long acpuclk_wait_for_irq(void)
 {
 	int ret = acpuclk_get_rate();
-	if (drv_state.wfi_ramp_down)
-		acpuclk_set_rate(WAIT_FOR_IRQ_HZ, SETRATE_SWFI);
-	return ret * 1000;
+	ret *= 1000;
+	if (ret > drv_state.wait_for_irq_khz)
+		acpuclk_set_rate(drv_state.wait_for_irq_khz, SETRATE_SWFI);
+	return ret;
 }
 
 static int acpuclk_set_acpu_vdd(struct clkctl_acpu_speed *s)
@@ -475,18 +479,6 @@ static void __init lpj_init(void)
 	}
 }
 
-/* Update frequency tables for a 1017.6MHz PLL2. */
-void __init pll2_1024mhz_fixup(void)
-{
-	if (acpu_freq_tbl[ARRAY_SIZE(acpu_freq_tbl)-2].acpu_clk_khz != 806400
-		  || freq_table[ARRAY_SIZE(freq_table)-2].frequency != 806400) {
-		pr_err("Frequency table fixups for PLL2 rate failed.\n");
-		BUG();
-	}
-	acpu_freq_tbl[ARRAY_SIZE(acpu_freq_tbl)-2].acpu_clk_khz = 1017600;
-	freq_table[ARRAY_SIZE(freq_table)-2].frequency = 1017600;
-}
-
 #define RPM_BYPASS_MASK	(1 << 3)
 #define PMIC_MODE_MASK	(1 << 4)
 void __init msm_acpu_clock_init(struct msm_acpu_clock_platform_data *clkdata)
@@ -496,17 +488,14 @@ void __init msm_acpu_clock_init(struct msm_acpu_clock_platform_data *clkdata)
 	mutex_init(&drv_state.lock);
 	drv_state.acpu_switch_time_us = clkdata->acpu_switch_time_us;
 	drv_state.vdd_switch_time_us = clkdata->vdd_switch_time_us;
+	drv_state.power_collapse_khz = clkdata->power_collapse_khz;
 	drv_state.wfi_ramp_down = 1;
 	drv_state.pwrc_ramp_down = 1;
-	/*Disabled For Overclocking of ACE (MSM8x55)*/
-	/* PLL2 runs at 1017.6MHz for MSM8x55. */
-	//if (cpu_is_msm8x55()) {
-	//	pll2_1024mhz_fixup();
-	//}
 	acpuclk_init();
 	lpj_init();
 
 	cpufreq_frequency_table_get_attr(freq_table, smp_processor_id());
 	register_acpuclock_debug_dev(&acpu_debug_7x30);
 }
+
 
