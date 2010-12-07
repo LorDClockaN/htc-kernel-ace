@@ -21,7 +21,7 @@
 #include <asm/gpio.h>
 #include <asm/io.h>
 #include <linux/skbuff.h>
-#include <linux/wlan_plat.h>
+#include <linux/wifi_tiwlan.h>
 
 #include "board-spade.h"
 
@@ -98,6 +98,7 @@ static struct wifi_platform_data spade_wifi_control = {
 	.set_reset      = spade_wifi_reset,
 	.set_carddetect = spade_wifi_set_carddetect,
 	.mem_prealloc   = spade_wifi_mem_prealloc,
+	.dot11n_enable  = 1,
 };
 
 static struct platform_device spade_wifi_device = {
