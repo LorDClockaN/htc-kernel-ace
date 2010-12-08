@@ -1,6 +1,7 @@
 config BCM4329
-	tristate "Broadcom 4329 wireless cards support (NEW FOR CM)"
-	depends on MMC
+	tristate "Broadcom 4329 wireless cards support -new-"
+	depends on MMC && !OLD_WIFI
+	default m
 	select WIRELESS_EXT
 	select WEXT_PRIV
 	---help---

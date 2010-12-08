@@ -1,6 +1,7 @@
 config BCM4329_OLD
-	tristate "Broadcom 4329 wireless cards support (OLD FOR SENSE)"
-	depends on WIRELESS_EXT && MMC
+	tristate "Broadcom 4329 wireless cards support -old-"
+	depends on WIRELESS_EXT && MMC && OLD_WIFI
+	default m
 	---help---
 	  This module adds support for wireless adapters based on
 	  Broadcom 4329 chipset.
@@ -9,6 +10,14 @@ config BCM4329_OLD
 
 	  If you choose to build a module, it'll be called dhd. Say M if
 	  unsure.
+
+config BCM4329_SOFTAP
+	depends on BCM4329_OLD
+	default y
+	bool "Broadcom 4329 Soft AP function"
+	---help---
+	  BCM4329 soft AP function	
+
 
 config BCM4329_FW_PATH
 	depends on BCM4329_OLD

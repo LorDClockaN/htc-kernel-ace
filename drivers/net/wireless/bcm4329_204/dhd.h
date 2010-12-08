@@ -5,13 +5,13 @@
  * DHD OS, bus, and protocol modules.
  *
  * Copyright (C) 1999-2010, Broadcom Corporation
- * 
+ *
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
  * under the terms of the GNU General Public License version 2 (the "GPL"),
  * available at http://www.broadcom.com/licenses/GPLv2.php, with the
  * following added to such license:
- * 
+ *
  *      As a special exception, the copyright holders of this software give you
  * permission to link this software with independent modules, and to copy and
  * distribute the resulting executable under terms of your choice, provided that
@@ -19,12 +19,12 @@
  * the license of that module.  An independent module is a module which is not
  * derived from this software.  The special exception does not apply to any
  * modifications of the software.
- * 
+ *
  *      Notwithstanding the above, under no circumstances may you combine this
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd.h,v 1.32.4.7.2.4.14.29 2010/02/23 06:58:21 Exp $
+ * $Id: dhd.h,v 1.32.4.7.2.4.14.27 2010/01/19 06:42:55 Exp $
  */
 
 /****************
@@ -59,6 +59,10 @@
 
 #include <wlioctl.h>
 
+#if defined(NDIS60)
+#include <wdf.h>
+#include <WdfMiniport.h>
+#endif
 
 /* Forward decls */
 struct dhd_bus;
@@ -81,9 +85,6 @@ enum dhd_bus_wake_state {
 	WAKE_LOCK_TMOUT,
 	WAKE_LOCK_WATCHDOG,
 	WAKE_LOCK_LINK_DOWN_TMOUT,
-	WAKE_LOCK_SOFTAP_SET,
-	WAKE_LOCK_SOFTAP_STOP,
-	WAKE_LOCK_SOFTAP_START,
 	WAKE_LOCK_MAX
 };
 enum dhd_prealloc_index {
@@ -148,6 +149,17 @@ typedef struct dhd_pub {
 	uint8 country_code[WLC_CNTRY_BUF_SZ];
 } dhd_pub_t;
 
+#if defined(NDIS60)
+
+typedef struct _wdf_device_info {
+	dhd_pub_t *dhd;
+} wdf_device_info_t;
+
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(wdf_device_info_t, dhd_get_wdf_device_info)
+
+
+#endif /* NDIS60 && !UNDERC_CE */
+
 	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) && defined(CONFIG_PM_SLEEP)
 
 	#define DHD_PM_RESUME_WAIT_INIT(a) DECLARE_WAIT_QUEUE_HEAD(a);
@@ -164,10 +176,10 @@ typedef struct dhd_pub {
 
 	#define DHD_SPINWAIT_SLEEP_INIT(a) DECLARE_WAIT_QUEUE_HEAD(a);
 	#define SPINWAIT_SLEEP(a, exp, us) do { \
-		uint countdown = (us) + 9; \
-		while ((exp) && (countdown >= 10)) { \
+		uint countdown = (us) + 9999; \
+		while ((exp) && (countdown >= 10000)) { \
 			wait_event_interruptible_timeout(a, FALSE, HZ/100); \
-			countdown -= 10; \
+			countdown -= 10000; \
 		} \
 	} while (0)
 
@@ -196,6 +208,7 @@ extern int dhd_os_wake_lock(dhd_pub_t *pub);
 extern int dhd_os_wake_unlock(dhd_pub_t *pub);
 extern int dhd_os_wake_lock_timeout(dhd_pub_t *pub);
 extern int dhd_os_wake_lock_timeout_enable(dhd_pub_t *pub);
+extern void dhd_htc_wake_lock_timeout(struct dhd_info *dhd, int sec);
 
 typedef struct dhd_if_event {
 	uint8 ifidx;
@@ -328,6 +341,10 @@ extern int wl_iw_iscan_set_scan_broadcast_prep(struct net_device *dev, uint flag
 extern uint dhd_watchdog_ms;
 
 
+#if defined(DHD_DEBUG)
+extern uint wl_msg_level;
+#endif /* DHD_DEBUG */
+
 /* Use interrupts */
 extern uint dhd_intr;
 
@@ -370,5 +387,38 @@ extern char nv_path[MOD_PARAM_PATHLEN];
 
 extern void dhd_wait_for_event(dhd_pub_t *dhd, bool *lockvar);
 extern void dhd_wait_event_wakeup(dhd_pub_t*dhd);
+
+#ifdef WLAN_PFN
+#define MAX_PFN_NUMBER	2
+#define PFN_SCAN_FREQ	60 /* in secs */
+#define PFN_WAKE_TIME	20000	/* in mini secs */
+int dhd_set_pfn_ssid(char * ssid, int ssid_len);
+int dhd_del_pfn_ssid(char * ssid, int ssid_len);
+#endif
+
+
+/* Packet Filter */
+enum pkt_filter_id {
+	ALLOW_UNICAST = 100,
+	ALLOW_ARP,
+	ALLOW_DHCP,
+	ALLOW_IPV4_MULTICAST,
+	ALLOW_IPV6_MULTICAST,
+};
+int dhd_set_pktfilter(int add, int id, int offset, char *mask, char *pattern);
+
+/* power control */
+enum dhdhtc_pwr_ctrl{
+	DHDHTC_POWER_CTRL_ANDROID_NORMAL = 0,
+	DHDHTC_POWER_CTRL_BROWSER_LOAD_PAGE,
+	DHDHTC_POWER_CTRL_USER_CONFIG,
+	DHDHTC_POWER_CTRL_WIFI_PHONE,
+	DHDHTC_POWER_CTRL_MAX_NUM,
+};
+extern int dhdhtc_update_wifi_power_mode(int is_screen_off);
+extern int dhdhtc_set_power_control(int power_mode, unsigned int reason);
+extern unsigned int dhdhtc_get_cur_pwr_ctrl(void);
+extern int dhdhtc_update_dtim_listen_interval(int is_screen_off);
+
 
 #endif /* _dhd_h_ */

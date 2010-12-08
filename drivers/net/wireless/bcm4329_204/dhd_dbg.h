@@ -30,18 +30,18 @@
 #ifdef DHD_DEBUG
 
 #define DHD_ERROR(args)	       do {if ((dhd_msg_level & DHD_ERROR_VAL) && (net_ratelimit())) \
-								printf args;} while (0)
-#define DHD_TRACE(args)		do {if (dhd_msg_level & DHD_TRACE_VAL) printf args;} while (0)
-#define DHD_INFO(args)		do {if (dhd_msg_level & DHD_INFO_VAL) printf args;} while (0)
-#define DHD_DATA(args)		do {if (dhd_msg_level & DHD_DATA_VAL) printf args;} while (0)
-#define DHD_CTL(args)		do {if (dhd_msg_level & DHD_CTL_VAL) printf args;} while (0)
-#define DHD_TIMER(args)		do {if (dhd_msg_level & DHD_TIMER_VAL) printf args;} while (0)
-#define DHD_HDRS(args)		do {if (dhd_msg_level & DHD_HDRS_VAL) printf args;} while (0)
-#define DHD_BYTES(args)		do {if (dhd_msg_level & DHD_BYTES_VAL) printf args;} while (0)
-#define DHD_INTR(args)		do {if (dhd_msg_level & DHD_INTR_VAL) printf args;} while (0)
-#define DHD_GLOM(args)		do {if (dhd_msg_level & DHD_GLOM_VAL) printf args;} while (0)
-#define DHD_EVENT(args)		do {if (dhd_msg_level & DHD_EVENT_VAL) printf args;} while (0)
-#define DHD_BTA(args)		do {if (dhd_msg_level & DHD_BTA_VAL) printf args;} while (0)
+								myprintf args;} while (0)
+#define DHD_TRACE(args)		do {if (dhd_msg_level & DHD_TRACE_VAL) myprintf args;} while (0)
+#define DHD_INFO(args)		do {if (dhd_msg_level & DHD_INFO_VAL) myprintf args;} while (0)
+#define DHD_DATA(args)		do {if (dhd_msg_level & DHD_DATA_VAL) myprintf args;} while (0)
+#define DHD_CTL(args)		do {if (dhd_msg_level & DHD_CTL_VAL) myprintf args;} while (0)
+#define DHD_TIMER(args)		do {if (dhd_msg_level & DHD_TIMER_VAL) myprintf args;} while (0)
+#define DHD_HDRS(args)		do {if (dhd_msg_level & DHD_HDRS_VAL) myprintf args;} while (0)
+#define DHD_BYTES(args)		do {if (dhd_msg_level & DHD_BYTES_VAL) myprintf args;} while (0)
+#define DHD_INTR(args)		do {if (dhd_msg_level & DHD_INTR_VAL) myprintf args;} while (0)
+#define DHD_GLOM(args)		do {if (dhd_msg_level & DHD_GLOM_VAL) myprintf args;} while (0)
+#define DHD_EVENT(args)		do {if (dhd_msg_level & DHD_EVENT_VAL) myprintf args;} while (0)
+#define DHD_BTA(args)		do {if (dhd_msg_level & DHD_BTA_VAL) myprintf args;} while (0)
 
 #define DHD_ERROR_ON()		(dhd_msg_level & DHD_ERROR_VAL)
 #define DHD_TRACE_ON()		(dhd_msg_level & DHD_TRACE_VAL)
@@ -58,7 +58,7 @@
 
 #else /* DHD_DEBUG */
 
-#define DHD_ERROR(args)    	do {if (net_ratelimit()) printf args;} while (0)
+#define DHD_ERROR(args)    	do {if (net_ratelimit()) myprintf args;} while (0)
 #define DHD_TRACE(args)
 #define DHD_INFO(args)
 #define DHD_DATA(args)

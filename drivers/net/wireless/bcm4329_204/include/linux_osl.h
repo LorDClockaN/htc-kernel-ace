@@ -143,8 +143,8 @@ extern void osl_dma_unmap(osl_t *osh, uint pa, uint size, int direction);
 
 
 
-#ifndef printf
-#define	printf(fmt, args...)	printk(fmt, ## args)
+#ifndef myprintf
+#define	myprintf(fmt, args...)	printk("wlan: "fmt, ## args)
 #endif 
 #include <linux/kernel.h>
 #include <linux/string.h>

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  */
-#ifndef CONFIG_BCM4329
+#ifndef CONFIG_OLD_WIFI
 #include <linux/wlan_plat.h>
 #endif
 #ifndef _LINUX_WIFI_TIWLAN_H_
@@ -24,7 +24,7 @@
 #define WMPA_SECTION_SIZE_1	(WMPA_NUMBER_OF_BUFFERS * 256)
 #define WMPA_SECTION_SIZE_2	(WMPA_NUMBER_OF_BUFFERS * 2048)
 
-#ifdef CONFIG_BCM4329_OLD
+#ifdef CONFIG_OLD_WIFI
 struct wifi_platform_data {
 	char *name;
 	int (*set_power)(int val);

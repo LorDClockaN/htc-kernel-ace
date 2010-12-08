@@ -24,7 +24,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: wlioctl.h,v 1.601.4.15.2.14.2.60 2010/04/12 05:33:02 Exp $
+ * $Id: wlioctl.h,v 1.601.4.15.2.14.2.59 2010/02/09 13:23:22 Exp $
  */
 
 
@@ -288,6 +288,9 @@ typedef enum sup_auth_status {
 #define CRYPTO_ALGO_AES_OCB_MSDU	5
 #define CRYPTO_ALGO_AES_OCB_MPDU	6
 #define CRYPTO_ALGO_NALG		7
+#ifdef BCMWAPI_WPI
+#define CRYPTO_ALGO_SMS4		11
+#endif 
 
 #define WSEC_GEN_MIC_ERROR	0x0001
 #define WSEC_GEN_REPLAY		0x0002
@@ -338,6 +341,9 @@ typedef struct {
 #define AES_ENABLED		0x0004
 #define WSEC_SWFLAG		0x0008
 #define SES_OW_ENABLED		0x0040	
+#ifdef BCMWAPI_WPI
+#define SMS4_ENABLED		0x0100
+#endif 
 
 
 #define WPA_AUTH_DISABLED	0x0000	
@@ -349,6 +355,9 @@ typedef struct {
 #define WPA2_AUTH_PSK		0x0080	
 #define BRCM_AUTH_PSK           0x0100  
 #define BRCM_AUTH_DPT		0x0200	
+#ifdef BCMWAPI_WPI
+#define WPA_AUTH_WAPI		0x0400	
+#endif 
 
 #define WPA_AUTH_PFN_ANY	0xffffffff	
 
@@ -1324,12 +1333,12 @@ typedef struct wl_pfn_param {
 } wl_pfn_param_t;
 
 typedef struct wl_pfn {
-	wlc_ssid_t		ssid;
-	int32			bss_type;
-	int32			infra;
-	int32			auth;
-	uint32			wpa_auth;
-	int32			wsec;
+	wlc_ssid_t		ssid;			
+	int32			bss_type;		
+	int32			infra;			
+	int32			auth;			
+	int32			wpa_auth;		
+	int32			wsec;			
 #ifdef WLPFN_AUTO_CONNECT
 	union {
 		wl_wsec_key_t	sec_key;		
