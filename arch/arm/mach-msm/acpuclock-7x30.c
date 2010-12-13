@@ -83,17 +83,19 @@ static struct cpufreq_frequency_table freq_table[] = {
 { 0, 245760 },
 { 1, 368640 },
 { 2, 460800 },
-{ 3, 806400 },
-{ 4, 1113600 },
-{ 5, 1228800 },
+{ 3, 614400 },
+{ 4, 806400 },
+{ 5, 1017600 },
+{ 6, 1132800 },
+{ 7, 1228800 },
 #ifdef CONFIG_LOW_FREQ
-{ 6, CPUFREQ_TABLE_END },
+{ 8, CPUFREQ_TABLE_END },
 #else
-{ 6, 1305600 },
-{ 7, 1401600 },
-{ 8, 1516800 },
-//{ 9, 1612800 },
-{ 9, CPUFREQ_TABLE_END },
+{ 8, 1305600 },
+{ 9, 1401600 },
+{ 10, 1516800 },
+//{ 11, 1612800 },
+{ 11, CPUFREQ_TABLE_END },
 #endif
 };
 
@@ -108,10 +110,12 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ MAX_AXI_KHZ, SRC_AXI, 1, 0, 61440, 1000, VDD_RAW(1000) },
 	{ 245760, PLL_3,    5, 2,  61440,  900, VDD_RAW(900) },
 	{ 368640, PLL_3,    5, 1,  122800, 900, VDD_RAW(900) },
-	{ 460800, PLL_1,    2, 0,  153600, 950, VDD_RAW(950) },
+	{ 460800, PLL_1,    2, 0,  153600, 925, VDD_RAW(925) },
 	/* Make sure any PLL_2 Clock is a multiple of 19200!*/
-	{ 806400, PLL_2,    3, 0,  192000, 1050, VDD_RAW(1050) },
-	{ 1113600, PLL_2,   3, 0,  192000, 1050, VDD_RAW(1050) },
+	{ 614400, PLL_2,    3, 0,  192000, 950, VDD_RAW(950) },
+	{ 806400, PLL_2,    3, 0,  192000, 1000, VDD_RAW(1000) },
+	{ 1017600, PLL_2,   3, 0,  192000, 1050, VDD_RAW(1050) },
+	{ 1132800, PLL_2,   3, 0,  192000, 1050, VDD_RAW(1050) },
 #ifdef CONFIG_LOW_FREQ
 	{ 1228800, PLL_2,   3, 0,  192000, 1100, VDD_RAW(1100) },
 #else
