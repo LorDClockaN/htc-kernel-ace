@@ -878,6 +878,10 @@ config LOW_FREQ
 	default n
         depends on CPU_FREQ && !PERFLOCK
 
+config OLD_WIFI
+	bool "set old wifi for old sense"
+	default n
+
 config MSM_HW3D
 	tristate "MSM Hardware 3D Register Driver"
 	depends on EARLYSUSPEND
