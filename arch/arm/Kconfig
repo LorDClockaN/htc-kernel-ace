@@ -1419,8 +1419,6 @@ config CPU_FREQ_S3C24XX_DEBUGFS
 
 endif
 
-# Ziggy471
-# source "drivers/undervolt/Kconfig"
 source "drivers/cpuidle/Kconfig"
 
 endmenu
