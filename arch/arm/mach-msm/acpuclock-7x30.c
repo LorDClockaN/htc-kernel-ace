@@ -80,22 +80,22 @@ struct clkctl_acpu_speed {
 static struct clock_state drv_state = { 0 };
 
 static struct cpufreq_frequency_table freq_table[] = {
-{ 0, 245760 },
-{ 1, 368640 },
-{ 2, 460800 },
-{ 3, 614400 },
-{ 4, 806400 },
-{ 5, 1017600 },
-{ 6, 1132800 },
-{ 7, 1228800 },
+	{ 0, 245760 },
+	{ 1, 368640 },
+	{ 2, 460800 },
+	{ 3, 614400 },
+	{ 4, 806400 },
+	{ 5, 1017600 },
+	{ 6, 1132800 },
+	{ 7, 1228800 },
 #ifdef CONFIG_LOW_FREQ
-{ 8, CPUFREQ_TABLE_END },
+	{ 8, CPUFREQ_TABLE_END },
 #else
-{ 8, 1305600 },
-{ 9, 1401600 },
-{ 10, 1516800 },
-//{ 11, 1612800 },
-{ 11, CPUFREQ_TABLE_END },
+	{ 8, 1305600 },
+	{ 9, 1401600 },
+	{ 10, 1516800 },
+	//{ 11, 1612800 },
+	{ 11, CPUFREQ_TABLE_END },
 #endif
 };
 
@@ -103,10 +103,10 @@ static struct cpufreq_frequency_table freq_table[] = {
 #define SRC_LPXO (-2)
 #define SRC_AXI  (-1)
 static struct clkctl_acpu_speed acpu_freq_tbl[] = {
-	{ 24576,  SRC_LPXO, 0, 0,  30720,  1000, VDD_RAW(1000) },
-	{ 61440,  PLL_3,    5, 11, 61440,  1000, VDD_RAW(1000) },
-	{ 122880, PLL_3,    5, 5,  61440,  1000, VDD_RAW(1000) },
-	{ 184320, PLL_3,    5, 4,  61440,  1000, VDD_RAW(1000) },
+	{ 24576,  SRC_LPXO, 0, 0,  30720,  900, VDD_RAW(1000) },
+	{ 61440,  PLL_3,    5, 11, 61440,  900, VDD_RAW(1000) },
+	{ 122880, PLL_3,    5, 5,  61440,  900, VDD_RAW(1000) },
+	{ 184320, PLL_3,    5, 4,  61440,  900, VDD_RAW(1000) },
 	{ MAX_AXI_KHZ, SRC_AXI, 1, 0, 61440, 1000, VDD_RAW(1000) },
 	{ 245760, PLL_3,    5, 2,  61440,  900, VDD_RAW(900) },
 	{ 368640, PLL_3,    5, 1,  122800, 925, VDD_RAW(925) },
@@ -115,15 +115,15 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ 614400, PLL_2,    3, 0,  192000, 975, VDD_RAW(975) },
 	{ 806400, PLL_2,    3, 0,  192000, 1025, VDD_RAW(1025) },
 	{ 1017600, PLL_2,   3, 0,  192000, 1050, VDD_RAW(1050) },
-	{ 1132800, PLL_2,   3, 0,  192000, 1050, VDD_RAW(1050) },
+	{ 1132800, PLL_2,   3, 0,  192000, 1075, VDD_RAW(1050) },
 #ifdef CONFIG_LOW_FREQ
 	{ 1228800, PLL_2,   3, 0,  192000, 1100, VDD_RAW(1100) },
 #else
-	{ 1228800, PLL_2,   3, 0,  192000, 1100, VDD_RAW(1100) },
+	{ 1228800, PLL_2,   3, 0,  192000, 1125, VDD_RAW(1100) },
 	{ 1305600, PLL_2,   3, 0,  192000, 1175, VDD_RAW(1175) },
 	{ 1401600, PLL_2,   3, 0,  192000, 1225, VDD_RAW(1225) },
 	{ 1516800, PLL_2,   3, 0,  192000, 1250, VDD_RAW(1250) },
-//	{ 1612800, PLL_2,   3, 0,  192000, 1375, VDD_RAW(1375) },
+//	{ 1612800, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1375) },
 #endif
 	{ 0 }
 };
