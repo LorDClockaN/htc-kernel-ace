@@ -3,7 +3,7 @@ DHDCFLAGS = -DLINUX -DBCMDRIVER -DBCMDONGLEHOST -DDHDTHREAD -DBCMWPA2         \
 	-DUNRELEASEDCHIP -Dlinux -DDHD_SDALIGN=64 -DMAX_HDR_READ=64           \
 	-DDHD_FIRSTREAD=64 -DDHD_GPL -DDHD_SCHED -DBDC -DTOE -DDHD_BCMEVENTS  \
 	-DSHOW_EVENTS -DBCMSDIO -DDHD_GPL -DBCMLXSDMMC -DBCMPLATFORM_BUS      \
-	-Wall -Wstrict-prototypes -Werror -DOOB_INTR_ONLY -DCUSTOMER_HW2      \
+	-Wall -Wstrict-prototypes -DOOB_INTR_ONLY -DCUSTOMER_HW2      \
 	-DDHD_USE_STATIC_BUF -DMMC_SDIO_ABORT -DWLAN_PFN -DWLAN_PROTECT       \
 	-DBCMWAPI_WPI -DWLAN_LOW_RSSI_IND -DCSCAN -DSOFTAP_PROTECT\
 	-Idrivers/net/wireless/bcm4329_204 -Idrivers/net/wireless/bcm4329_204/include
@@ -16,4 +16,4 @@ DHDOFILES = dhd_linux.o linux_osl.o bcmutils.o dhd_common.o dhd_custom_gpio.o \
 obj-$(CONFIG_BCM4329_OLD) += bcm4329.o
 bcm4329-objs += $(DHDOFILES)
 EXTRA_CFLAGS = $(DHDCFLAGS)
-EXTRA_LDFLAGS += --strip
+EXTRA_LDFLAGS += --strip-debug

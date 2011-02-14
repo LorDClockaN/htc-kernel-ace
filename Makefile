@@ -522,7 +522,7 @@ endif # $(dot-config)
 # Defaults vmlinux but it is usually overridden in the arch makefile
 all: vmlinux
 
-KBUILD_CFLAGS	+= -O3
+KBUILD_CFLAGS	+= -O2
 
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
