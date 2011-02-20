@@ -174,7 +174,6 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ 1497600, PLL_2,   3, 0,  192000, 1250, VDD_RAW(1250) },
 	{ 1536000, PLL_2,   3, 0,  192000, 1275, VDD_RAW(1275) },
 	{ 1574400, PLL_2,   3, 0,  192000, 1275, VDD_RAW(1275) },
-	{ 1593600, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
 	{ 1612800, PLL_2,   3, 0,  192000, 1325, VDD_RAW(1325) },
 #ifdef CONFIG_SUPER_FREQ
 	{ 1689600, PLL_2,   3, 0,  192000, 1375, VDD_RAW(1400) },
