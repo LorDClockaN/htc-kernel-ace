@@ -193,8 +193,6 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 #endif
 
 #endif
-
-#endif
 	{ 0 }
 };
 static unsigned long max_axi_rate;
