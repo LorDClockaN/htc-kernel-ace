@@ -127,6 +127,7 @@ static struct cpufreq_frequency_table freq_table[] = {
 #else
 	{ 33, CPUFREQ_TABLE_END },
 #endif
+#endif
 };
 
 /* Use negative numbers for sources that can't be enabled/disabled */
@@ -174,10 +175,10 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ 1536000, PLL_2,   3, 0,  192000, 1275, VDD_RAW(1275) },
 	{ 1574400, PLL_2,   3, 0,  192000, 1275, VDD_RAW(1275) },
 	{ 1593600, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
-	{ 1612800, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
+	{ 1612800, PLL_2,   3, 0,  192000, 1325, VDD_RAW(1325) },
 #ifdef CONFIG_SUPER_FREQ
-	{ 1689600, PLL_2,   3, 0,  192000, 1350, VDD_RAW(1350) },
-	{ 1728000, PLL_2,   3, 0,  192000, 1375, VDD_RAW(1375) },
+	{ 1689600, PLL_2,   3, 0,  192000, 1375, VDD_RAW(1400) },
+	{ 1728000, PLL_2,   3, 0,  192000, 1375, VDD_RAW(1400) },
 	{ 1804800, PLL_2,   3, 0,  192000, 1425, VDD_RAW(1425) },
 	{ 1881600, PLL_2,   3, 0,  192000, 1425, VDD_RAW(1425) },
 	{ 1920000, PLL_2,   3, 0,  192000, 1450, VDD_RAW(1450) },
