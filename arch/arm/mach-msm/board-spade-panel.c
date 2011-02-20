@@ -582,7 +582,7 @@ static struct msm_fb_data spade_lcdc_fb_data = {
 	.yres		= 800,
 	.width		= 57,
 	.height		= 94,
-	.output_format	= 0,
+	.output_format	= MSM_MDP_OUT_IF_FMT_RGB888,
 };
 
 static struct msm_lcdc_platform_data spade_lcdc_platform_data = {
