@@ -878,6 +878,11 @@ config LOW_FREQ
 	default n
         depends on CPU_FREQ && !PERFLOCK
 
+config SUPER_FREQ
+	bool "Enable 2Ghz O/C"
+	default n
+        depends on CPU_FREQ && !PERFLOCK && !LOW_FREQ
+
 config OLD_WIFI
 	bool "set old wifi for old sense"
 	default n
