@@ -57,11 +57,6 @@ config GPU_MSM_KGSL_ADRENO205
           use hardware accelerated OpenGL ES 2.0 and 1.1 on these
           chips.
 
-config DISABLE_SHADOW_WRITES
-        bool "Disable Shadow Writes"
-        default n
-        help
-           nothing of help here
 
 config MSM_ROTATOR
         tristate "MSM Offline Image Rotator Driver"

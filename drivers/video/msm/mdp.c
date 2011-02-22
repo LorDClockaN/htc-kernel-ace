@@ -43,7 +43,6 @@ static DECLARE_WAIT_QUEUE_HEAD(mdp_ppp_waitqueue);
 static unsigned int mdp_irq_mask;
 static unsigned int mdp_dma_timer_enable = 0;
 struct clk *mdp_clk_to_disable_later = 0;
-static unsigned int mdp_dma_user_requested = 0;
 static struct  mdp_blit_req *timeout_req;
 #ifdef CONFIG_FB_MSM_OVERLAY
 extern int mdp4_overlay_get(struct mdp_device *mdp_dev, struct fb_info *info, struct mdp_overlay *req);
@@ -172,7 +171,6 @@ static irqreturn_t mdp_isr(int irq, void *data)
 	if (mdp_dma_timer_enable) {
 		del_timer_sync(&mdp->dma_timer);
 		mdp_dma_timer_enable = 0;
-		pr_err("%s: stop dma timer\n", __func__);
 	}
 
 	status &= mdp_irq_mask;
@@ -505,29 +503,18 @@ void mdp_dma(struct mdp_device *mdp_dev, uint32_t addr, uint32_t stride,
 
 	spin_lock_irqsave(&mdp->lock, flags);
 	if (locked_enable_mdp_irq(mdp, out_if->dma_mask)) {
-		mdp_dma_user_requested++;
-                if (mdp_dma_user_requested > 2) {
-                        pr_err("%s: really busy? start dma timer\n", __func__);
-			/* something wrong in dma, workaround it */
-			mdp_dma_timer_enable = 1;
-			mdp_dma_user_requested = 0;
-                } else {
-			pr_err("%s: busy\n", __func__);
-			goto done;
-		}
-	} else
-		mdp_dma_user_requested = 0;
+		/* something wrong in dma, workaround it */
+                mdp_dma_timer_enable = 1;
+		pr_err("%s: busy\n", __func__);
+	}
 
 	out_if->dma_cb = callback;
 	out_if->dma_start(out_if->priv, addr, stride, width, height, x, y);
 
-	if (mdp_dma_timer_enable) {
-		mdp_writel(mdp, mdp_irq_mask & ~out_if->dma_mask, MDP_INTR_ENABLE);
-		pr_err("%s: start dma timer\n", __func__);
+	if (mdp_dma_timer_enable)
 		mod_timer(&mdp->dma_timer,
-			jiffies + msecs_to_jiffies(30));
-	}
-done:
+			jiffies + msecs_to_jiffies(17));
+
 	spin_unlock_irqrestore(&mdp->lock, flags);
 }
 
@@ -760,6 +747,39 @@ int register_mdp_client(struct class_interface *cint)
 	return class_interface_register(cint);
 }
 
+
+static int
+mdp_write_reg_mask(struct mdp_info *mdp, uint32_t reg, uint32_t val, uint32_t mask)
+{
+	uint32_t oldval, newval;
+
+	oldval = mdp_readl(mdp, reg);
+
+	oldval &= (~mask);
+	val &= mask;
+	newval = oldval | val;
+
+	mdp_writel(mdp, newval, reg);
+
+	return 0;
+
+}
+
+static int
+mdp_write_regs(struct mdp_info *mdp, const struct mdp_reg *reglist, int size)
+{
+	const struct mdp_reg *reg_seq = reglist;
+	int i;
+
+	for (i = 0; i < size; i++) {
+		if (reg_seq[i].mask == 0x0)
+			mdp_writel(mdp, reg_seq[i].val, reg_seq[i].reg);
+		else
+			mdp_write_reg_mask(mdp, reg_seq[i].reg, reg_seq[i].val, reg_seq[i].mask);
+	}
+
+	return 0;
+}
 int mdp_probe(struct platform_device *pdev)
 {
 	struct resource *resource;
@@ -811,11 +831,15 @@ int mdp_probe(struct platform_device *pdev)
 
 	mdp->enable_irq = enable_mdp_irq;
 	mdp->disable_irq = disable_mdp_irq;
+	mdp->write_regs = mdp_write_regs;
 
 	if (pdata == NULL || pdata->overrides == 0)
 		mdp->mdp_dev.overrides = 0;
 	else if(pdata->overrides)
 		mdp->mdp_dev.overrides = pdata->overrides;
+
+	if (pdata != NULL)
+		pdata->mdp_dev = &mdp->mdp_dev;
 
 	if (pdata == NULL || pdata->color_format == 0)
 		mdp->mdp_dev.color_format = MSM_MDP_OUT_IF_FMT_RGB565;

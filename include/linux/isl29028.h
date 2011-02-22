@@ -53,6 +53,8 @@ struct isl29028_platform_data {
 	uint8_t lt;
 	uint8_t ht;
 	uint8_t debounce;
+	uint8_t *mapping_table;
+	uint8_t mapping_size;
 };
 
 #endif

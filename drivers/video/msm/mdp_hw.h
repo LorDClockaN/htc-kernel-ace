@@ -60,6 +60,7 @@ struct mdp_info {
 
 	int (*enable_irq)(struct mdp_info *mdp, uint32_t mask);
 	int (*disable_irq)(struct mdp_info *mdp, uint32_t mask);
+	int (*write_regs)(struct mdp_info *mdp, const struct mdp_reg *reglist, int size);
 };
 
 struct mdp_lcdc_info {
@@ -92,9 +93,13 @@ struct mdp_lcdc_info {
 struct panel_icm_info {
 	bool	icm_mode;
 	bool	icm_doable;
+	bool	clock_enabled;
 	int	panel_update;
+	bool	icm_suspend;
 	struct mutex icm_lock;
+	struct mdp_lcdc_info *lcdc;
 	spinlock_t lock;
+	void (*force_leave)(void);
 };
 
 extern int mdp_out_if_register(struct mdp_device *mdp_dev, int interface,

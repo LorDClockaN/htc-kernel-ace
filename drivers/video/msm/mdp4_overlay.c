@@ -162,7 +162,6 @@ void mdp4_overlay_parameters_check(struct mdp4_overlay_pipe *pipe)
 	}
 }
 
-
 void mdp4_overlay_dmap_cfg(struct mdp4_overlay_pipe *pipe, int lcdc)
 {
 	uint32_t	dmap_cfg_reg = 0;
@@ -1272,7 +1271,6 @@ static int get_img(struct msmfb_data *img, struct fb_info *info,
 }
 int mdp4_overlay_get(struct mdp_device *mdp_dev, struct fb_info *info, struct mdp_overlay *req)
 {
-	//struct mdp_info *mdp = container_of(mdp_dev, struct mdp_info, mdp_dev);
 	struct mdp4_overlay_pipe *pipe;
 
 	pipe = mdp4_overlay_ndx2pipe(req->id);
@@ -1290,11 +1288,25 @@ int mdp4_overlay_set(struct mdp_device *mdp_dev, struct fb_info *info, struct md
 	int ret, mixer;
 	struct mdp4_overlay_pipe *pipe;
 	int lcdc;
-
+#ifdef CONFIG_PANEL_SELF_REFRESH
+	unsigned long irq_flags = 0;
+#endif
 
 	if (req->src.format == MDP_FB_FORMAT)
 		req->src.format = MDP_RGB_565;//mfd->fb_imgType;
 
+#ifdef CONFIG_PANEL_SELF_REFRESH
+	if (mdp->mdp_dev.overrides & MSM_MDP_RGB_PANEL_SELE_REFRESH) {
+		panel_icm->force_leave();
+		spin_lock_irqsave(&panel_icm->lock, irq_flags);
+		panel_icm->panel_update = 1;
+		spin_unlock_irqrestore(&panel_icm->lock, irq_flags);
+		wake_up(&panel_update_wait_queue);
+		mutex_lock(&panel_icm->icm_lock);
+		panel_icm->icm_doable = false;
+		mutex_unlock(&panel_icm->icm_lock);
+	}
+#endif
 
 	mixer = info->node; /* minor number of char device */
 
@@ -1328,6 +1340,7 @@ int mdp4_overlay_set(struct mdp_device *mdp_dev, struct fb_info *info, struct md
 		clk_disable(mdp->clk);
 	}
 
+//	mutex_unlock(&mdp->ov_mutex);
 
 	return 0;
 }
@@ -1355,6 +1368,14 @@ int mdp4_overlay_unset(struct mdp_device *mdp_dev, struct fb_info *info, int ndx
 		mdp4_overlay_reg_flush(pipe, 0);
 
 	mdp4_overlay_pipe_free(pipe);
+#ifdef CONFIG_PANEL_SELF_REFRESH
+	if (mdp->mdp_dev.overrides & MSM_MDP_RGB_PANEL_SELE_REFRESH) {
+		mutex_lock(&panel_icm->icm_lock);
+		if(panel_icm->icm_suspend == false)
+			panel_icm->icm_doable = true;
+		mutex_unlock(&panel_icm->icm_lock);
+	}
+#endif
 
 
 	clk_disable(mdp->clk);
@@ -1418,13 +1439,13 @@ int mdp4_overlay_play(struct mdp_device *mdp_dev, struct fb_info *info, struct m
 
 #ifdef CONFIG_PANEL_SELF_REFRESH
 	if (mdp->mdp_dev.overrides & MSM_MDP_RGB_PANEL_SELE_REFRESH) {
+		panel_icm->force_leave();
 		spin_lock_irqsave(&panel_icm->lock, irq_flags);
 		panel_icm->panel_update = 1;
 		spin_unlock_irqrestore(&panel_icm->lock, irq_flags);
 		wake_up(&panel_update_wait_queue);
 	}
 #endif
-
 
 	img = &req->data;
 	get_img(img, info, &start, &len, &p_src_file);
@@ -1439,6 +1460,8 @@ int mdp4_overlay_play(struct mdp_device *mdp_dev, struct fb_info *info, struct m
 	pipe->srcp0_addr = addr;
 	pipe->srcp0_ystride = pipe->src_width * pipe->bpp;
 	pipe->mdp = mdp;
+
+	clk_set_rate(mdp->ebi1_clk, 153000000);
 	clk_enable(mdp->clk);
 
 	if (pipe->fetch_plane == OVERLAY_PLANE_PSEUDO_PLANAR) {
@@ -1470,10 +1493,14 @@ int mdp4_overlay_play(struct mdp_device *mdp_dev, struct fb_info *info, struct m
 		mdp4_overlay_reg_flush(pipe, 1);
 		if (pipe->mixer_stage != MDP4_MIXER_STAGE_BASE) { /* done */
 			clk_disable(mdp->clk);
+			mod_timer(&mdp->standby_timer,
+				jiffies + msecs_to_jiffies(1000));
 			return 0;
 		}
 	}
 	clk_disable(mdp->clk);
+	mod_timer(&mdp->standby_timer,
+		jiffies + msecs_to_jiffies(1000));
 
 	return 0;
 }
