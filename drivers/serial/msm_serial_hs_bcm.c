@@ -73,7 +73,7 @@
 /* for bcm */
 #define USE_BCM_BT_CHIP
 /* for bcm bt serial debug */
-#define BT_SERIAL_DBG
+//#define BT_SERIAL_DBG
 /* for bcm bt serial startup once */
 #define BT_SERIAL_OPEN_ONCE
 /* for cup performance lock */
