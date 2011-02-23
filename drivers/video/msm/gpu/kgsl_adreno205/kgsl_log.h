@@ -32,7 +32,7 @@
 #include <linux/types.h>
 #include <linux/msm_kgsl.h>
 #include <linux/device.h>
-#define DEBUG
+//#define DEBUG
 extern unsigned int kgsl_drv_log;
 extern unsigned int kgsl_cmd_log;
 extern unsigned int kgsl_ctxt_log;
