@@ -111,7 +111,9 @@ static int icm_thread(void *data)
 				clk_disable(lcdc->pclk);
 				clk_disable(lcdc->mdp_clk);
 				panel_icm->clock_enabled = false;
+				#ifdef CONFIG_PANEL_SELF_REFRESH_DEBUG
 				printk(KERN_DEBUG "EnterICM: enter ICM MODE done!!!\n");
+				#endif
 			}
 		} else {/* get update event, no timeout */
 			ICM_DBG("Leave ICM: icm_mode=%d icm_doable=%d \n", panel_icm->icm_mode, panel_icm->icm_doable);
@@ -126,7 +128,9 @@ static int icm_thread(void *data)
 					panel_ops->refresh_disable(panel_ops);
 
 				panel_icm->icm_mode = false;
+				#ifdef CONFIG_PANEL_SELF_REFRESH_DEBUG
 				printk(KERN_DEBUG "LeaveICM: leave ICM MODE done !!!\n");
+				#endif
 			}
 			spin_lock_irqsave(&panel_icm->lock, irq_flags);
 			panel_icm->panel_update = 0;
