@@ -952,10 +952,10 @@ config LOW_FREQ
 	default n
         depends on CPU_FREQ && !PERFLOCK
 
-config SUPER_FREQ
-	bool "Enable 2Ghz O/C"
+config NUTTER
+	bool "Nutter mode max 1.8Ghz"
 	default n
-        depends on CPU_FREQ && !PERFLOCK && !LOW_FREQ
+	depends on CPU_FREQ && !PERFLOCK
 
 config MSM_HW3D
 	tristate "MSM Hardware 3D Register Driver"
