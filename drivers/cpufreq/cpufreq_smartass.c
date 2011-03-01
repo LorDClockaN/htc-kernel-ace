@@ -103,13 +103,13 @@ static unsigned int max_ramp_down;
 /*
  * CPU freq will be increased if measured load > max_cpu_load;
  */
-#define DEFAULT_MAX_CPU_LOAD 90
+#define DEFAULT_MAX_CPU_LOAD 85
 static unsigned long max_cpu_load;
 
 /*
  * CPU freq will be decreased if measured load < min_cpu_load;
  */
-#define DEFAULT_MIN_CPU_LOAD 30
+#define DEFAULT_MIN_CPU_LOAD 35
 static unsigned long min_cpu_load;
 
 
@@ -122,7 +122,7 @@ static
 struct cpufreq_governor cpufreq_gov_smartass = {
 	.name = "smartass",
 	.governor = cpufreq_governor_smartass,
-	.max_transition_latency = 6000000,
+	.max_transition_latency = 5000000,
 	.owner = THIS_MODULE,
 };
 
