@@ -947,11 +947,6 @@ config MSM_CPU_FREQ_ONDEMAND_MIN
 	int "Min"
 	default 245760
 
-config LOW_FREQ
-	bool "Limit_To_1.22Ghz"
-	default n
-        depends on CPU_FREQ && !PERFLOCK
-
 config NUTTER
 	bool "Nutter mode max 1.8Ghz"
 	default n
