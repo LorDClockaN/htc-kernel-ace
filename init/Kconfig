@@ -715,8 +715,6 @@ config CC_OPTIMIZE_ALOT
 
 endchoice
 
-config OPTIMIZE_LEVEL
-
 config SYSCTL
 	bool
 
